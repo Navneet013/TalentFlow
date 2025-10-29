@@ -32,7 +32,7 @@ TalentFlow is a mini hiring platform built with React, TypeScript, and Vite. It 
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 
 ### Installation
@@ -95,6 +95,7 @@ TalentFlow/
 ## 📋 Features Implementation
 
 ### Jobs Board
+
 - ✅ List with pagination (10 items per page)
 - ✅ Filter by status (active/archived) and search by title
 - ✅ Archive/Unarchive jobs
@@ -103,6 +104,7 @@ TalentFlow/
 - ✅ Links to assessment builder and kanban board
 
 ### Candidates
+
 - ✅ Virtualized list (react-virtual)
 - ✅ Client-side search by name/email
 - ✅ Server-like filter by stage
@@ -112,6 +114,7 @@ TalentFlow/
 - ✅ Notes with @mention highlighting
 
 ### Assessments
+
 - ✅ Assessment builder per job
 - ✅ Multiple question types (single-choice, multi-choice, short/long text, numeric, file-upload stub)
 - ✅ Live preview pane
@@ -125,11 +128,13 @@ TalentFlow/
 The following endpoints are mocked:
 
 ### Jobs
+
 - `GET /jobs?search=&status=&page=&pageSize=&sort=`
 - `PATCH /jobs/:id` - Update job status
 - `PATCH /jobs/reorder` - Reorder jobs (50% error rate for testing)
 
 ### Candidates
+
 - `GET /candidates?search=&stage=&page=`
 - `PATCH /candidates/:id` - Update stage
 - `GET /candidates/:id` - Get details
@@ -138,6 +143,7 @@ The following endpoints are mocked:
 - `GET /candidates-for-job/:jobId`
 
 ### Assessments
+
 - `GET /assessments/:jobId`
 - `PUT /assessments/:jobId`
 - `POST /assessments/:jobId/submit`
@@ -150,25 +156,16 @@ The following endpoints are mocked:
 - **3 assessments** with varying question types
 - **Timeline events** for initial candidates
 
-## 🚨 Known Issues & Technical Decisions
-
 ### Implemented Features
+
 1. All core requirements from the technical assessment
 2. Optimistic UI updates with rollback
 3. Error rate simulation (50% for reorder, 5-10% for other operations)
 4. Virtualized rendering for performance
 5. Local persistence with IndexedDB
 
-### Missing from Requirements
-1. ❌ **Job Creation/Edit Modal**: Currently missing - jobs can only be archived/unarchived and reordered
-2. ❌ **Job Deep Link Page**: Jobs don't have individual detail pages (`/jobs/:jobId`)
-3. ❌ **Slug Validation**: While slugs exist in the schema, there's no UI for creating jobs with unique slug validation
-4. ❌ **Full Assessment Validation**: Missing numeric range validation and more complex conditional logic
-5. ❌ **File Upload**: Only has stub implementation
-6. ❌ **@Mention Suggestions**: Notes show @mentions but no autocomplete/dropdown
-7. ❌ **Comprehensive Seed Data**: Only 3 assessments, needs more variety
-
 ### Architecture Highlights
+
 - **Error Simulation**: 50% error rate on job reordering to test optimistic updates
 - **Database Migrations**: Uses Dexie versioning for schema evolution
 - **MSW Integration**: Service worker runs in development for realistic API behavior
@@ -185,6 +182,7 @@ The following endpoints are mocked:
 ## 🧪 Testing Considerations
 
 The app is set up for testing with:
+
 - Simulated network delays (200-1200ms)
 - Error injection (5-10% random errors)
 - Optimistic update rollback on failures
