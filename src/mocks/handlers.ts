@@ -63,7 +63,18 @@ export const handlers = [
             if (existing) { return new HttpResponse('Job title must be unique (slug already exists)', { status: 400 }); }
             const maxOrderJob = await db.jobs.orderBy('order').last();
             const nextOrder = (maxOrderJob?.order ?? -1) + 1;
-            const newJob: IJob = { title, slug, description, keyRequirements, location, type,date, status: status || 'active', tags: tags || [], order: nextOrder};
+            const newJob: IJob = {
+  title,
+  slug,
+  description,
+  keyRequirements,
+  location,
+  type: type as IJob['type'],  // ✅ safely cast
+  date,
+  status: status || 'active',
+  tags: tags || [],
+  order: nextOrder
+};
             const newId = await db.jobs.add(newJob);
             const createdJob = await db.jobs.get(newId);
             console.log('Created Job:', createdJob);
@@ -84,7 +95,17 @@ export const handlers = [
             const slug = createSlug(title);
             const existing = await db.jobs.where('slug').equals(slug).first();
             if (existing && existing.id !== jobId) { return new HttpResponse('Job title must be unique (slug already exists)', { status: 400 }); }
-            const updates = { title, slug, status, tags , description, keyRequirements,location,type,date};
+            const updates = {
+  title,
+  slug,
+  status,
+  tags,
+  description,
+  keyRequirements,
+  location,
+  type: type as IJob['type'],  // ✅ same fix
+  date
+};
             const updatedCount = await db.jobs.update(jobId, updates);
             if (updatedCount === 0) { return new HttpResponse(null, { status: 404, statusText: 'Job not found for update'}); }
             const updatedJob = await db.jobs.get(jobId);
