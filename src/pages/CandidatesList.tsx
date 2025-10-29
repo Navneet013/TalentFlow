@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, type ChangeEvent } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCandidates, updateCandidateStage } from "../api";
+import Box from "@mui/material/Box";
 import {
   Alert,
   Loader,
@@ -11,7 +12,6 @@ import {
   Stack,
   Group,
   Text,
-  Box,
   SegmentedControl,
 } from "@mantine/core";
 import { type CandidateStage, STAGES, type ICandidate } from "../db";
