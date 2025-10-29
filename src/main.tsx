@@ -53,12 +53,19 @@ const router = createBrowserRouter([
 ]);
 
 // Function to prepare MSW (only in development)
+// async function prepareApp() {
+//   if (import.meta.env.DEV) {
+//     const { worker } = await import('./mocks/browser.ts');
+//     // Start MSW with specific options [cite: 27, 45]
+//     await worker.start({ onUnhandledRequest: 'bypass' });
+//   }
+// }
+
 async function prepareApp() {
-  if (import.meta.env.DEV) {
-    const { worker } = await import('./mocks/browser.ts');
-    // Start MSW with specific options [cite: 27, 45]
-    await worker.start({ onUnhandledRequest: 'bypass' });
-  }
+ // The "if" check is REMOVED.
+ const { worker } = await import('./mocks/browser.ts');
+ // Start MSW always [cite: 27, 45]
+ await worker.start({ onUnhandledRequest: 'bypass' });
 }
 
 // Main function to start the app
