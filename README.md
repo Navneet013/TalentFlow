@@ -1,32 +1,33 @@
 # TalentFlow - Hiring Platform
 
-A React front-end application for HR teams to manage jobs, candidates, and assessments - built as a technical assessment project.
+A complete front-end application for an Applicant Tracking System (ATS). It allows HR teams to manage jobs, candidates, and dynamic assessments. This project is built entirely in React and simulates a full backend using **MSW (Mock Service Worker)** and **Dexie (IndexedDB)** for a realistic, persistent, and self-contained development experience.
 
-## 🚀 Project Overview
+## 🚀 Core Features
 
-TalentFlow is a mini hiring platform built with React, TypeScript, and Vite. It simulates a backend using MSW (Mock Service Worker) and persists data locally using Dexie/IndexedDB.
-
-### Core Features
-
-- **Job Management**: Create, edit, archive, and reorder jobs with drag-and-drop
-- **Candidate Management**: Track candidates through hiring stages with kanban boards
-- **Assessments**: Build custom assessments with multiple question types
-- **Real-time Updates**: Optimistic UI updates with rollback on failure
-- **Virtualized Lists**: Handle 1000+ candidates efficiently with react-virtual
-- **Local Persistence**: All data persists in IndexedDB
+- **📊 Dashboard**: At-a-glance overview of active jobs, candidates, and assessments.
+- **📋 Job Management**: Create, edit, and archive job postings. Features a 3-column grid layout with drag-and-drop reordering.
+- **👥 Candidate Tracking**:
+  - **List View**: A virtualized list (using TanStack Virtual) to handle 1,000+ candidates without performance lag.
+  - **Kanban View**: A drag-and-drop board to move candidates between stages (`applied`, `screen`, `tech`, etc.).
+  - **Profile Page**: A detailed view for each candidate showing their timeline (stage changes, notes).
+- **📝 Assessment Suite**:
+  - **Builder**: A powerful, per-job assessment creator with a live preview pane.
+  - **Dynamic Forms**: Supports multiple question types (short text, multi-choice, numeric, file upload, etc.).
+  - **Form Runtime**: A public-facing page (`/assessment/:jobId/take`) for candidates to take and submit assessments.
+  - **Response Viewer**: A page to review all JSON-based submissions for a specific job.
 
 ## 🛠️ Tech Stack
 
-- **React 19** with TypeScript
-- **Vite** for build tooling
-- **TanStack Query** for server state management
-- **Mantine UI** for components
-- **MSW** for API mocking
-- **Dexie** for IndexedDB
-- **React Router** for navigation
-- **dnd-kit** for drag-and-drop
-- **React Hook Form** for form handling
-- **TanStack Virtual** for virtualization
+- **Framework**: React (with TypeScript)
+- **Build Tool**: Vite
+- **UI Library**: Mantine UI
+- **Routing**: React Router
+- **Forms**: React Hook Form
+- **Drag & Drop**: `@dnd-kit`
+- **Virtualization**: `@tanstack/react-virtual`
+- **State Management**: TanStack Query (React Query) for server state (caching, mutations)
+- **Mock Backend**: Mock Service Worker (MSW)
+- **Local Database**: Dexie.js (IndexedDB wrapper)
 
 ## 📦 Setup
 
@@ -37,167 +38,111 @@ TalentFlow is a mini hiring platform built with React, TypeScript, and Vite. It 
 
 ### Installation
 
-```bash
-# Navigate to the project directory
-cd TalentFlow
+1.  **Clone the repository:**
 
-# Install dependencies
-npm install
+    ```bash
+    git clone [your-repo-url]
+    cd TalentFlow
+    ```
 
-# Start development server
-npm run dev
+2.  **Install dependencies:**
 
-# Build for production
-npm run build
-```
+    ```bash
+    npm install
+    ```
+
+3.  **Run the development server:**
+
+    - This will start the Vite server and the MSW mock backend.
+    - The first time you run this, Dexie will be seeded with mock data.
+
+    <!-- end list -->
+
+    ```bash
+    npm run dev
+    ```
+
+    Your app will be running at `http://localhost:5173`.
+
+---
 
 ## 🏗️ Architecture
+
+This application is designed as a **"local-first"** mock application. The React frontend is completely decoupled from the mock backend, making it ready to be connected to a real API with minimal changes.
+
+### 1\. Mock Backend (MSW & Dexie)
+
+- **MSW (`/src/mocks/handlers.ts`)**: Intercepts all outgoing `fetch`/`axios` requests. Instead of hitting a network, it processes the request and interacts with the local database.
+- **Dexie (`/src/db.ts`)**: A wrapper for **IndexedDB** that provides a persistent, queryable database in the browser. All jobs, candidates, and assessments are stored here, so data survives page reloads.
+- **Seed Script (`/src/seed.ts`)**: On first load, populates the Dexie database with 25 jobs, 1000 candidates, and several sample assessments.
+- **Simulated Latency**: All mock API handlers include a random delay (200-1200ms) and a 5-8% chance of failure to simulate real-world network conditions.
+
+### 2\. Frontend (React & TanStack Query)
+
+- **API Client (`/src/api.ts`)**: A central `axios`-based client that defines all API functions. This is the _only_ file that knows about API endpoints.
+- **TanStack Query**: Manages all server state. Every `GET` request is cached, and every `POST`/`PATCH` request uses `useMutation` for handling loading states, errors, and cache invalidation.
+- **Component-based Pages (`/src/pages/`)**: Each route corresponds to a page component. These components are "dumb" and simply use the hooks from `api.ts` (via React Query) to fetch data and render the UI.
 
 ### Project Structure
 
 ```
 TalentFlow/
 ├── src/
-│   ├── api.ts                 # API client functions
-│   ├── db.ts                  # Dexie database schema
-│   ├── seed.ts                # Database seeding script
-│   ├── main.tsx               # App entry point
-│   ├── components/
-│   │   └── Layout.tsx         # Main app layout with navigation
-│   ├── pages/
-│   │   ├── JobsBoard.tsx      # Jobs list with pagination & filters
-│   │   ├── JobKanbanBoard.tsx # Kanban board for candidates
-│   │   ├── CandidatesList.tsx  # Virtualized candidates list
-│   │   ├── CandidateProfile.tsx # Candidate details & timeline
-│   │   ├── AssessmentBuilder.tsx # Assessment creation
-│   │   ├── TakeAssessment.tsx # Assessment taking interface
-│   │   └── AssessmentResponses.tsx # View submitted responses
-│   └── mocks/
-│       ├── browser.ts         # MSW worker setup
-│       ├── handlers.ts        # API mock handlers
-│       └── utils.ts          # Mock utilities (delays, errors)
+│ ├── api.ts              # API client functions (used by React Query)
+│ ├── db.ts               # Dexie (IndexedDB) schema and versioning
+│ ├── seed.ts             # Script to populate Dexie with mock data
+│ ├── main.tsx            # App entry point, Router, QueryClient
+│ │
+│ ├── components/
+│ │ └── Layout.tsx        # Main AppShell (Sidebar, Header)
+│ │ └── JobModal.tsx      # Create/Edit Job Form
+│ │
+│ ├── pages/
+│ │ ├── Dashboard.tsx     # Stats overview
+│ │ ├── JobsBoard.tsx     # Job grid, filters, and D&D reordering
+│ │ ├── JobDetail.tsx     # Job info and quick actions
+│ │ ├── JobKanbanBoard.tsx# Per-job candidate kanban
+│ │ ├── CandidatesList.tsx# Main virtualized candidate list
+│ │ ├── CandidateProfile.tsx# Candidate details & timeline
+│ │ ├── AssessmentBuilder.tsx # (Complex) Builder UI w/ Immer reducer
+│ │ ├── TakeAssessment.tsx  # (Complex) Dynamic form w/ React Hook Form
+│ │ └── AssessmentResponses.tsx
+│ │
+│ └── mocks/
+│   ├── browser.ts        # MSW worker setup
+│   ├── handlers.ts       # All mock API route handlers (The "fake" backend)
+│   └── utils.ts          # Mock utilities (delay, error simulation)
 ```
 
-### Data Flow
+---
 
-1. **MSW Layer**: Simulates network requests with injected delays (200-1200ms) and errors (5-10%)
-2. **API Layer**: Axios-based API client with TanStack Query for caching
-3. **IndexedDB**: Dexie stores all data locally, survives page refreshes
-4. **React Query**: Provides caching, optimistic updates, and error handling
+## 🧠 Key Technical Decisions
 
-### Key Design Decisions
+This project's architecture was guided by these key decisions:
 
-- **Optimistic Updates**: Jobs reordering and candidate stage changes update UI immediately, roll back on error
-- **Virtualization**: Candidates list virtualizes for performance with 1000+ items
-- **Server-like Pagination**: Jobs use pagination similar to a real backend
-- **Local-first**: All data persists in IndexedDB, restored on refresh
+1.  **MSW + Dexie over a Real Backend**: Using a service worker to intercept requests and a local DB to persist data creates a high-fidelity development environment. It's fast, works offline, and allows for building complex features (like optimistic updates and error simulation) that would be difficult with a simple JSON server.
 
-## 📋 Features Implementation
+2.  **TanStack Query for Server State**: Instead of `useState` and `useEffect` for data fetching, we use React Query. This gives us caching, automatic refetching, and a clean way to manage mutations (create, update, delete) with `useMutation`.
 
-### Jobs Board
+3.  **Optimistic Updates**: For a snappy user experience, critical actions update the UI _before_ the API call completes.
 
-- ✅ List with pagination (10 items per page)
-- ✅ Filter by status (active/archived) and search by title
-- ✅ Archive/Unarchive jobs
-- ✅ Drag-and-drop reordering with rollback on error
-- ✅ Deep linking `/jobs/:jobId/board`
-- ✅ Links to assessment builder and kanban board
+    - **Job Reordering (`JobsBoard.tsx`)**: When a job is dragged, the UI updates instantly. If the (mock) API call fails, React Query rolls back the change and shows the original order.
+    - **Candidate Stage Change (`JobKanbanBoard.tsx`)**: Dragging a candidate to a new column optimistically updates the local state. The mutation runs in the background.
 
-### Candidates
+4.  **`useImmerReducer` for Complex State**: The **Assessment Builder** (`AssessmentBuilder.tsx`) state is a deeply nested object (sections -\> questions -\> options). Using `useState` would be a nightmare of nested spreads. `useImmerReducer` allows for direct, "mutable" state updates while preserving immutability under the hood.
 
-- ✅ Virtualized list (react-virtual)
-- ✅ Client-side search by name/email
-- ✅ Server-like filter by stage
-- ✅ Candidate profile route `/candidates/:id`
-- ✅ Timeline of status changes and notes
-- ✅ Kanban board with drag-and-drop between stages
-- ✅ Notes with @mention highlighting
+5.  **TanStack Virtual for Performance**: The main **Candidates List** (`CandidatesList.tsx`) is designed to hold 1,000+ items. Rendering them all would crash the browser. TanStack Virtual is used to render _only_ the items visible in the viewport, ensuring instant load times and smooth scrolling.
 
-### Assessments
+6.  **Dynamic Forms with React Hook Form**: The **Take Assessment** (`TakeAssessment.tsx`) page dynamically generates a form from a JSON schema (the `builderState`). React Hook Form (`useForm`, `Controller`) is used to manage this dynamic state, handle validation (required, maxLength, min/max), and collect the results.
 
-- ✅ Assessment builder per job
-- ✅ Multiple question types (single-choice, multi-choice, short/long text, numeric, file-upload stub)
-- ✅ Live preview pane
-- ✅ Persistent builder state
-- ✅ Form runtime with validation (required, max length)
-- ✅ Conditional questions (show Q3 only if Q1 === "Yes")
-- ✅ View submitted responses
+---
 
-## 🎯 API Endpoints (MSW)
+## 📋 Known Issues & Limitations
 
-The following endpoints are mocked:
-
-### Jobs
-
-- `GET /jobs?search=&status=&page=&pageSize=&sort=`
-- `PATCH /jobs/:id` - Update job status
-- `PATCH /jobs/reorder` - Reorder jobs (50% error rate for testing)
-
-### Candidates
-
-- `GET /candidates?search=&stage=&page=`
-- `PATCH /candidates/:id` - Update stage
-- `GET /candidates/:id` - Get details
-- `GET /candidates/:id/timeline` - Get timeline
-- `POST /candidates/:id/notes` - Add note
-- `GET /candidates-for-job/:jobId`
-
-### Assessments
-
-- `GET /assessments/:jobId`
-- `PUT /assessments/:jobId`
-- `POST /assessments/:jobId/submit`
-- `GET /assessment-responses/:jobId`
-
-## 📊 Seeded Data
-
-- **25 jobs** (mixed active/archived)
-- **1000 candidates** randomly assigned to jobs and stages
-- **3 assessments** with varying question types
-- **Timeline events** for initial candidates
-
-### Implemented Features
-
-1. All core requirements from the technical assessment
-2. Optimistic UI updates with rollback
-3. Error rate simulation (50% for reorder, 5-10% for other operations)
-4. Virtualized rendering for performance
-5. Local persistence with IndexedDB
-
-### Architecture Highlights
-
-- **Error Simulation**: 50% error rate on job reordering to test optimistic updates
-- **Database Migrations**: Uses Dexie versioning for schema evolution
-- **MSW Integration**: Service worker runs in development for realistic API behavior
-
-## 🎨 UI/UX Features
-
-- Modern, clean interface using Mantine UI
-- Responsive design with AppShell layout
-- Loading states and error handling
-- Debounced search (300ms delay)
-- Toast notifications for save success
-- Smooth drag-and-drop animations
-
-## 🧪 Testing Considerations
-
-The app is set up for testing with:
-
-- Simulated network delays (200-1200ms)
-- Error injection (5-10% random errors)
-- Optimistic update rollback on failures
-
-## 📝 Future Improvements
-
-1. Add job creation/edit form
-2. Implement job detail page with deep linking
-3. Add comprehensive form validation including numeric ranges
-4. Implement file upload functionality
-5. Add @mention autocomplete suggestions
-6. Add more question types (scale, matrix, etc.)
-7. Export assessment responses to CSV
-8. Add authentication and multi-user support
-9. Real-time collaboration features
+- **File Uploads are Stubbed**: The "File Upload" question type only _selects_ a file. It does not actually upload it to any storage or persist it in the database. The `responseData` only contains the file's metadata (name, size).
+- **Client-Side Filtering**: On the main `CandidatesList`, the search and stage filters are client-side (filtering the 1,000-item array in JS). In a real-world app, this would be a server-side query. (The `JobsBoard` _does_ simulate server-side filtering).
+- **No Authentication**: The application has no concept of users or authentication. The "Navneet Singh" user in the sidebar is hardcoded.
+- **Basic Error Handling**: Most error handling relies on `console.error` and `alert()`. While optimistic updates have rollback logic, there is no app-wide toast/notification system for other API failures.
 
 ## 📄 License
 
