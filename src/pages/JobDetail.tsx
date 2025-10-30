@@ -17,8 +17,8 @@ import {
   Grid,
   List,
   ThemeIcon,
-  ActionIcon, // For back button
-  Tooltip,   // For tooltip
+  ActionIcon, 
+  Tooltip,  
 } from '@mantine/core';
 import {
   IconArrowLeft,
@@ -26,15 +26,13 @@ import {
   IconUsers,
   IconFileText,
   IconCheck,
-  IconExternalLink, // For "Take Assessment" link
+  IconExternalLink, 
 } from '@tabler/icons-react';
-// Remove direct db import: import { db, type IJob } from '../db';
 
 export default function JobDetail() {
   const { jobId } = useParams();
   const navigate = useNavigate();
 
-  // Fetch job details using React Query and api function
   const { data: job, isLoading, isError, error } = useQuery({
     queryKey: ['job', jobId],
     queryFn: () => getJobDetails(jobId!), // Use API function

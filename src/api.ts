@@ -11,7 +11,6 @@ import {
   type IAssessmentResponse,
 } from './db';
 
-// --- Job ---
 export interface GetJobsResponse {
   jobs: IJob[];
   totalCount: number;

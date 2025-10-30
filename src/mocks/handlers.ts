@@ -1,5 +1,3 @@
-// src/mocks/handlers.ts
-
 import { http, HttpResponse } from 'msw';
 import {
     db, type IJob, type JobStatus, type ICandidate, type CandidateStage,
@@ -64,17 +62,17 @@ export const handlers = [
             const maxOrderJob = await db.jobs.orderBy('order').last();
             const nextOrder = (maxOrderJob?.order ?? -1) + 1;
             const newJob: IJob = {
-  title,
-  slug,
-  description,
-  keyRequirements,
-  location,
-  type: type as IJob['type'],  // ✅ safely cast
-  date,
-  status: status || 'active',
-  tags: tags || [],
-  order: nextOrder
-};
+                           title,
+                           slug,
+                           description,
+                           keyRequirements,
+                           location,
+                           type: type as IJob['type'],  
+                           date,
+                           status: status || 'active',
+                           tags: tags || [],
+                           order: nextOrder
+        };
             const newId = await db.jobs.add(newJob);
             const createdJob = await db.jobs.get(newId);
             console.log('Created Job:', createdJob);

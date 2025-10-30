@@ -9,7 +9,7 @@ import {
   MultiSelect,
   Group,
 } from '@mantine/core';
-import { DateInput } from '@mantine/dates'; // ⬅️ Add Mantine date picker
+import { DateInput } from '@mantine/dates'; 
 import { type IJob } from '../db';
 import { type JobFormData } from '../api';
 

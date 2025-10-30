@@ -1,5 +1,3 @@
-// src/components/Layout.tsx
-
 import {
   AppShell,
   Group,
@@ -53,10 +51,10 @@ export default function Layout() {
             component={Link}
             to="/jobs"
             leftSection={<IconBriefcase size="1rem" stroke={1.5} />}
-            c="gray.0" // White text
-            active={isActive('/jobs')} // Highlight if path starts with /jobs
-            variant="light" // Use light variant for subtle active state
-            color="blue"    // Use primary blue for active color
+            c="gray.0" 
+            active={isActive('/jobs')} 
+            variant="light" 
+            color="blue"    
             styles={{ root: { borderRadius: 'md', marginBottom: 4 } }}
           />
           {/* Candidates Link */}
@@ -65,7 +63,7 @@ export default function Layout() {
             component={Link}
             to="/candidates"
             leftSection={<IconUsers size="1rem" stroke={1.5} />}
-            c="gray.0" // White text
+            c="gray.0" 
             active={isActive('/candidates')}
             variant="light"
             color="blue"
@@ -77,7 +75,7 @@ export default function Layout() {
             component={Link}
             to="/assessments"
             leftSection={<IconFileText size="1rem" stroke={1.5} />}
-            c="gray.0" // White text
+            c="gray.0" 
             active={isActive('/assessments')}
             variant="light"
             color="blue"

@@ -1,5 +1,4 @@
 // src/pages/AssessmentBuilder.tsx
-
 import { useEffect, useState, type Dispatch } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useImmerReducer } from 'use-immer';
@@ -54,15 +53,12 @@ type Action =
 const assessmentReducer = (draft: AssessmentState, action: Action) => {
     let question: AssessmentQuestion | undefined;
 
-    // --- FIX: Check if payload exists and has sIndex/qIndex before accessing ---
     if (action.type !== 'ADD_SECTION' && action.type !== 'UPDATE_TITLE' && action.type !== 'SET_STATE') {
         // Only actions with sIndex/qIndex will enter here
         if ('sIndex' in action.payload && 'qIndex' in action.payload) {
              question = draft.sections[action.payload.sIndex]?.questions[action.payload.qIndex];
         }
     }
-    // --- END FIX ---
-
 
     switch (action.type) {
         case 'SET_STATE': return action.payload;
