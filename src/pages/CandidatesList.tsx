@@ -462,7 +462,7 @@ export default function CandidatesList() {
                 height: "100%",
                 paddingBottom: "10px",
                 WebkitOverflowScrolling: "touch", // For smooth scrolling on mobile
-                scrollbarWidth: "none",
+                scrollbarWidth: "thin",
               }} // Allow horizontal scroll
             >
               {/* Map through STAGES to create a column for each */}

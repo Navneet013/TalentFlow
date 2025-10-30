@@ -6,102 +6,161 @@ import {
   Avatar,
   Text,
   Box,
-} from '@mantine/core';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+  Burger,
+  Drawer,
+  ScrollArea,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import {
   IconBriefcase,
   IconUsers,
   IconUserCircle,
   IconFileText,
-} from '@tabler/icons-react';
+  IconChartBar,
+} from "@tabler/icons-react";
 
 export default function Layout() {
-  const location = useLocation(); // Hook to get current path
+  const location = useLocation();
+  const [opened, { toggle, close }] = useDisclosure(false);
 
-  // Helper to determine if a NavLink is active
   const isActive = (path: string) => location.pathname.startsWith(path);
+
+  // Reusable nav links component
+  const navLinks = (
+    <Box style={{ flex: 1 }}>
+      <NavLink
+        label="Dashboard"
+        component={Link}
+        to="/dashboard"
+        leftSection={<IconChartBar size="1rem" stroke={1.5} />}
+        c="gray.0"
+        active={isActive("/dashboard")}
+        variant="light"
+        color="blue"
+        styles={{ root: { borderRadius: "md", marginBottom: 4 } }}
+        onClick={close}
+      />
+      <NavLink
+        label="Jobs Board"
+        component={Link}
+        to="/jobs"
+        leftSection={<IconBriefcase size="1rem" stroke={1.5} />}
+        c="gray.0"
+        active={isActive("/jobs")}
+        variant="light"
+        color="blue"
+        styles={{ root: { borderRadius: "md", marginBottom: 4 } }}
+        onClick={close}
+      />
+      <NavLink
+        label="Candidates"
+        component={Link}
+        to="/candidates"
+        leftSection={<IconUsers size="1rem" stroke={1.5} />}
+        c="gray.0"
+        active={isActive("/candidates")}
+        variant="light"
+        color="blue"
+        styles={{ root: { borderRadius: "md", marginBottom: 4 } }}
+        onClick={close}
+      />
+      <NavLink
+        label="Assessments"
+        component={Link}
+        to="/assessments"
+        leftSection={<IconFileText size="1rem" stroke={1.5} />}
+        c="gray.0"
+        active={isActive("/assessments")}
+        variant="light"
+        color="blue"
+        styles={{ root: { borderRadius: "md" } }}
+        onClick={close}
+      />
+    </Box>
+  );
+
+  const userProfile = (
+    <Box p="sm" style={{ borderTop: "1px solid var(--mantine-color-dark-7)" }}>
+      <Group>
+        <Avatar color="blue.6" variant="filled">
+          <IconUserCircle />
+        </Avatar>
+        <div>
+          <Text c="gray.0" fw={500} size="sm">
+            Navneet Singh
+          </Text>
+        </div>
+      </Group>
+    </Box>
+  );
 
   return (
     <AppShell
       header={{ height: 60 }}
       navbar={{
         width: 250,
-        breakpoint: 'sm', // Collapse on small screens
+        breakpoint: "sm",
+        collapsed: { mobile: true }, // hides sidebar on small screens
       }}
       padding="md"
     >
-      {/* Header Bar - Dark Theme */}
-      <AppShell.Header bg="dark.8" style={{ borderBottom: '1px solid var(--mantine-color-dark-6)' }}>
-        <Group h="100%" px="md">
-          {/* Link title back to jobs board */}
-          <Link to="/jobs" style={{ textDecoration: 'none' }}>
-            <Title order={2} c="blue.5">
-              TalentFlow
-            </Title>
-          </Link>
+      {/* HEADER */}
+      <AppShell.Header
+        bg="dark.8"
+        style={{ borderBottom: "1px solid var(--mantine-color-dark-6)" }}
+      >
+        <Group h="100%" px="md" justify="space-between">
+          <Group>
+            {/* Burger visible on mobile */}
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              hiddenFrom="sm"
+              size="sm"
+              color="blue.4"
+            />
+            <Link to="/jobs" style={{ textDecoration: "none" }}>
+              <Title order={2} c="blue.5">
+                TalentFlow
+              </Title>
+            </Link>
+          </Group>
         </Group>
       </AppShell.Header>
 
-      {/* Sidebar Navigation - Dark Theme with White Text */}
-      <AppShell.Navbar p="md" bg="dark.9" style={{ borderRight: '1px solid var(--mantine-color-dark-7)' }}>
-        <Box style={{ flex: 1 }}>
-          {/* Jobs Link */}
-          <NavLink
-            label="Jobs Board"
-            component={Link}
-            to="/jobs"
-            leftSection={<IconBriefcase size="1rem" stroke={1.5} />}
-            c="gray.0" 
-            active={isActive('/jobs')} 
-            variant="light" 
-            color="blue"    
-            styles={{ root: { borderRadius: 'md', marginBottom: 4 } }}
-          />
-          {/* Candidates Link */}
-          <NavLink
-            label="Candidates"
-            component={Link}
-            to="/candidates"
-            leftSection={<IconUsers size="1rem" stroke={1.5} />}
-            c="gray.0" 
-            active={isActive('/candidates')}
-            variant="light"
-            color="blue"
-            styles={{ root: { borderRadius: 'md', marginBottom: 4 } }}
-          />
-          {/* Assessments Link */}
-           <NavLink
-            label="Assessments"
-            component={Link}
-            to="/assessments"
-            leftSection={<IconFileText size="1rem" stroke={1.5} />}
-            c="gray.0" 
-            active={isActive('/assessments')}
-            variant="light"
-            color="blue"
-            styles={{ root: { borderRadius: 'md' } }}
-          />
-        </Box>
-
-        {/* User Profile Area */}
-        <Box p="sm" style={{ borderTop: '1px solid var(--mantine-color-dark-7)' }}>
-          <Group>
-            <Avatar color="blue.6" variant="filled">
-              <IconUserCircle />
-            </Avatar>
-            <div>
-              {/* White text for name */}
-              <Text c="gray.0" fw={500} size="sm">
-                Navneet Singh
-              </Text>
-            </div>
-          </Group>
-        </Box>
+      {/* SIDEBAR (Desktop only) */}
+      <AppShell.Navbar
+        p="md"
+        bg="dark.9"
+        style={{ borderRight: "1px solid var(--mantine-color-dark-7)" }}
+      >
+        {navLinks}
+        {userProfile}
       </AppShell.Navbar>
 
-      {/* Main Content Area - Slightly lighter dark background */}
+      {/* DRAWER (Mobile) */}
+      <Drawer
+        opened={opened}
+        onClose={close}
+        size="250"
+        padding="md"
+        hiddenFrom="sm"
+        withCloseButton={false}
+        overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
+        styles={{
+          content: { backgroundColor: "var(--mantine-color-dark-9)" },
+        }}
+      >
+        <ScrollArea h="100%">
+          {navLinks}
+          {userProfile}
+        </ScrollArea>
+      </Drawer>
+
+      {/* MAIN CONTENT */}
       <AppShell.Main bg="dark.7">
-        <Outlet /> {/* Renders the matched page component */}
+        <Outlet />
       </AppShell.Main>
     </AppShell>
   );

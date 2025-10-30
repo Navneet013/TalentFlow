@@ -112,7 +112,7 @@ function SortableJobItem({
         }}
       >
         {/* Card Header (Drag handle, Icon, Title, Status, Edit) */}
-        <Group justify="space-between" mb="xs" wrap="nowrap">
+        <Group mb="xs" wrap="wrap">
           <Group
             gap="xs"
             {...listeners}
@@ -120,7 +120,7 @@ function SortableJobItem({
               cursor: "grab",
               touchAction: "none",
               minWidth: 0,
-              flexShr: 1,
+              flexShr: 0,
             }}
           >
             <ActionIcon
@@ -146,7 +146,7 @@ function SortableJobItem({
               <Title
                 order={5}
                 style={{
-                  whiteSpace: "nowrap",
+                  whiteSpace: "wrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                 }}
@@ -155,25 +155,23 @@ function SortableJobItem({
               </Title>
             </Link>
           </Group>
-          <Group gap={6} style={{ flexShr: 0 }}>
-            <Badge
-              size="sm"
-              variant="light"
-              radius="sm"
-              color={job.status === "active" ? "green" : "gray"}
-            >
-              {job.status}
-            </Badge>
-            <Tooltip label="Edit Job Details">
-              <ActionIcon
-                variant="default"
-                size="sm"
-                onClick={() => onEdit(job)}
-              >
-                <IconEdit size={14} stroke={1.5} />
-              </ActionIcon>
-            </Tooltip>
-          </Group>
+        </Group>
+
+        {/* I just added Active and Edit here due to problems with text wrapping */}
+        <Group gap={6} style={{ flexShr: 0 }}>
+          <Badge
+            size="sm"
+            variant="light"
+            radius="sm"
+            color={job.status === "active" ? "green" : "gray"}
+          >
+            {job.status}
+          </Badge>
+          <Tooltip label="Edit Job Details">
+            <ActionIcon variant="default" size="sm" onClick={() => onEdit(job)}>
+              <IconEdit size={14} stroke={1.5} />
+            </ActionIcon>
+          </Tooltip>
         </Group>
 
         {/* Description Placeholder */}
@@ -183,13 +181,13 @@ function SortableJobItem({
 
         {/* Metadata Placeholders */}
         <Group gap="xs" mt="md">
-          <Badge variant="outline" color="gray" radius="md" p={'sm'} size="sm">
+          <Badge variant="outline" color="gray" radius="md" p={"sm"} size="sm">
             {job.location}
           </Badge>
-          <Badge variant="outline" color="gray" radius="md" p={'sm'} size="sm">
+          <Badge variant="outline" color="gray" radius="md" p={"sm"} size="sm">
             {job.type}
           </Badge>
-          <Badge variant="outline" color="gray" radius="md" p={'sm'} size="sm">
+          <Badge variant="outline" color="gray" radius="md" p={"sm"} size="sm">
             {new Date(job.date).toLocaleDateString()}
           </Badge>
         </Group>
